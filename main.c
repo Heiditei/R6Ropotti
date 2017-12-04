@@ -61,7 +61,7 @@ int main()
     int16 adcresult =0;
     float volts = 0.0;
     float voltsBa = 0.0;
-    float nopeus = 125; //Säädä tästä robotin nopeus. Skaalaa automaagisesti loput.
+    float nopeus = 150; //Säädä tästä robotin nopeus. Skaalaa automaagisesti loput.
     int stopline = 0;
     printf("\nBoot\n");
 
@@ -76,7 +76,7 @@ int main()
     UART_1_Start();
     uint8 button;
     //int stopline = 1;
-    reflectance_set_threshold (10000, 10000, 10000, 10000);
+    //reflectance_set_threshold (10000, 10000, 10000, 10000);
   
     sensor_isr_StartEx(sensor_isr_handler);
     
@@ -112,23 +112,30 @@ int main()
             motor_turn (nopeus, nopeus, 0);
             stopline++;
             printf ("stopline %d \n", stopline);
-            //motor_stop ();
+            motor_stop ();
+            Beep (3,44);
         }
         
         //Aja oikealle
         if (ref.l1 < 15000 && ref.l1 > 9000) {
             motor_turn(nopeus, nopeus/3,0);
         }
-        if ((ref.l1 < 9000 && ref.l1 > 3000) ) { //|| ref.r3 > 10000
+        else if ((ref.l1 < 9000 && ref.l1 > 3000) ) { //|| ref.r3 > 10000
             motor_turn(nopeus,0,0); //1  
+        }
+        else if ((ref.r3 > 9000)){
+            motor_turn ( nopeus/2,0,0);
         }
         
         //Aja vasemmalle
         if (ref.r1 < 15000 && ref.r1 > 9000) {
             motor_turn(nopeus/3,nopeus,0);
             }
-        if ((ref.r1 < 9000 && ref.r1 > 3000) ) { //|| ref.l3 > 10000
+        else if ((ref.r1 < 9000 && ref.r1 > 3000) ) { //|| ref.l3 > 10000
             motor_turn(0,nopeus,0);
+        }
+        else if ((ref.l3 >9000)){
+            motor_turn (nopeus/2,0,0);
         }
 
             

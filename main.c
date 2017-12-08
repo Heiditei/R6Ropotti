@@ -49,8 +49,8 @@ int rread(void);
  * @file    main.c
  * @brief   
  * @details  ** You should enable global interrupt for operating properly. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
-*/
-
+*/        
+    
 
 //battery level//
 int main()
@@ -61,7 +61,7 @@ int main()
     int16 adcresult =0;
     float volts = 0.0;
     float voltsBa = 0.0;
-    float nopeus = 150; //Säädä tästä robotin nopeus. Skaalaa automaagisesti loput.
+    float nopeus = 225; //Säädä tästä robotin nopeus. Skaalaa automaagisesti loput.
     int stopline = 0;
     printf("\nBoot\n");
 
@@ -77,7 +77,6 @@ int main()
     uint8 button;
     //int stopline = 1;
     //reflectance_set_threshold (10000, 10000, 10000, 10000);
-  
     sensor_isr_StartEx(sensor_isr_handler);
     
     reflectance_start();
@@ -88,7 +87,8 @@ int main()
     {
     }
     CyDelay(500);
-    for(;;)
+    
+     for(;;)
     {
         button = SW1_Read(); // read SW1 on pSoC board
         {
@@ -102,22 +102,53 @@ int main()
         reflectance_digital(&dig);
         printf("%d %d %d %d \r\n", dig.l3, dig.l1, dig.r1, dig.r3);
         //print out 0 or 1 according to results of reflectance period
-        
-        //Aja suoraan
+       
+         //Kaikki mustalla
+        if (dig.l3 == 0 && dig.l1 ==0 && dig.r1 == 0 && dig.r3 == 0) {
+           if(dig.l3 == 1 && dig.r3 == 1){
+                motor_turn (nopeus, nopeus, 0);
+                stopline++;
+                printf ("stopline %d \n", stopline);
+                //motor_stop ();
+                Beep (3,20);
+            }
+            else {
+                printf ("almost stopline \n");
+                motor_stop();
+                Beep (1,30);
+            }
+        }
+         //Aja suoraan
         if (ref.l1 > 9000 && ref.r1 > 9000) {
             motor_turn (nopeus,nopeus,0);
         }
-        //Kaikki mustalla
-        if (dig.l3 == 0 && dig.l1 ==0 && dig.r1 == 0 && dig.r3 == 0) {
-            motor_turn (nopeus, nopeus, 0);
-            stopline++;
-            printf ("stopline %d \n", stopline);
-            motor_stop ();
-            Beep (3,44);
+        
+        //Aja oikealle
+        //l3 = valk, l1 = valk, r1 = must, r3 =valk
+        if ((ref.r1 > 15000) && (ref.l1 < 9000) && (ref.r3 < 9000) && (ref.l3 < 9000)) {
+            motor_turn (nopeus,0, 0); 
+        }//l3 = valk, l1 = valk, r1 = must, r3 =must
+        else if ((ref.r1 > 15000) && (ref.r3 > 15000) && (ref.l1 < 9000) && (ref.l3 < 9000)) {
+            motor_turn (nopeus,0, 0);
+        }//l3 = valk, l1 = valk, r1 = valk, r3 =must
+        else if ((ref.r3 > 15000) && (ref.r1 < 9000) && (ref.l1 < 9000) && (ref.l3 < 9000)){
+            motor_turn (nopeus,0, 0);
+        }
+        
+        //Aja vasemmalle
+         //l3 = valk, l1 = must, r1 = valk, r3 =valk
+        if ((ref.l1 > 15000) && (ref.r1 < 9000) && (ref.l3 < 9000) && (ref.r3 <9000)){
+            motor_turn (0, nopeus, 0);
+        }//l3 = must, l1 = must, r1 = valk, r3 =valk
+        else if ((ref.l1 > 15000) && (ref.l3 > 15000) && (ref.r1 < 9000) && (ref.r3 < 9000)){
+            motor_turn (0,nopeus,0);
+        }//l3 = must, l1 = valk, r1 = valk, r3 =valk
+        else if ((ref.l3 > 15000) && (ref.l1 < 9000) && (ref.r1 < 9000) && (ref.r3 < 9000)){
+            motor_turn (0, nopeus,0);
         }
         
         //Aja oikealle
-        if (ref.l1 < 15000 && ref.l1 > 9000) {
+        /*if (ref.l1 < 15000 && ref.l1 > 9000) {
             motor_turn(nopeus, nopeus/3,0);
         }
         else if ((ref.l1 < 9000 && ref.l1 > 3000) ) { //|| ref.r3 > 10000
@@ -125,10 +156,10 @@ int main()
         }
         else if ((ref.r3 > 9000)){
             motor_turn ( nopeus/2,0,0);
-        }
+        }*/
         
         //Aja vasemmalle
-        if (ref.r1 < 15000 && ref.r1 > 9000) {
+        /*if (ref.r1 < 15000 && ref.r1 > 9000) {
             motor_turn(nopeus/3,nopeus,0);
             }
         else if ((ref.r1 < 9000 && ref.r1 > 3000) ) { //|| ref.l3 > 10000
@@ -136,15 +167,16 @@ int main()
         }
         else if ((ref.l3 >9000)){
             motor_turn (nopeus/2,0,0);
-        }
+        }*/
+       
 
             
         //Odota ensimmäisllä mustalla viivalla ja pysäytä moottori kahden mustan viivan jälkeen
         if (stopline == 1) {
-           // motor_stop();
-            //wait_going_down();
-            //motor_start();
-           // motor_turn (200,200,1);
+            motor_stop();
+            wait_going_down();
+            motor_start();
+            motor_turn (200,200,1);
         } else if (stopline > 2) {
             motor_stop();
         }
@@ -153,6 +185,8 @@ int main()
         //stopline++;
         //CyDelay(100);
     }
+
+         
     }
 
     /*

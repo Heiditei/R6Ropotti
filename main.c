@@ -213,6 +213,26 @@ int main()
        
     motor_stop();               // motor stop
 */
+	 //pysähtyy kahden viivan välille
+	/* if ((ref.l1 == 0) && (ref.r1 == 0 ) && (ref.l3 == 0) && (ref.r3 == 0))
+        { 
+            if ((ref.l1 == 0) && (ref.r1 == 0) && (ref.l3 == 1) && (ref.r3 == 1))
+            {
+              
+                if ((ref.l1 == 0) && (ref.r1 == 0) && (ref.l3 == 0) && (ref.r3 == 0))
+                {
+                    motor_stop();
+                }
+                else 
+                {
+                  
+                }
+            }
+            else
+            {
+           
+            }
+        }*/
     for(;;)
     {
         

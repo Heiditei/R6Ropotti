@@ -125,37 +125,37 @@ int main()
         // aja oikealle
         // l3 = must, l1 = valk, r1 = valk, r3 = valk
         if ((dig.l3 == 0) && (dig.l1 == 1) && (dig.r1 == 1) && (dig.r3 == 1)) {
-            motor_turn (nopeus,0, 0); 
+            motor_turn (nopeus,0, 500); 
         }//l3 = must, l1 = must, r1 = valk, r3 = valk
         else if ((dig.l3 == 0) && (dig.l1 == 0) && (dig.r1 == 1) && (dig.r3 == 1)) {
-            motor_turn (nopeus,0, 0);
+            motor_turn (nopeus,0, 500);
         }//l3 = must, l1 = must, r1 = must, r3 = valk
         else if ((dig.l3 == 0) && (dig.l1 == 0) && (dig.r1 == 0) && (dig.r3 == 1)){
-            motor_turn (nopeus,0, 0);
+            motor_turn (nopeus,0, 500);
         }
 
         //aja vasemmalle
         //l3 = valk, l1 = must, r1 = must, r3 = must
         if (dig.l3 == 1 && dig.l1 == 0 && dig.r1 == 0 && dig.r3 == 0) {
-            motor_turn (0, nopeus, 0);
+            motor_turn (0, nopeus, 500);
         }//l3 = valk, l1 = valk, r1 = must, r3 = must
         else if ((dig.l3 == 1) && (dig.l1 == 1) && (dig.r1 == 0) && (dig.r3 == 0)){
-            motor_turn (0,nopeus,0);
+            motor_turn (0,nopeus,500);
         }//l3 = valk, l1 = valk, r1 = valk, r3 = must
         else if ((dig.l3 == 1) && (dig.l1 == 1) && (dig.r1 == 1) && (dig.r3 == 0)){
-            motor_turn (0, nopeus,0);
+            motor_turn (0, nopeus,500);
         }   
         
         
         // jos kaikki on mustia
         if (dig.l3 == 0 && dig.l1 == 0 && dig.r1 == 0 && dig.r3 == 0) {
-            motor_backward (nopeus, 0);
+            motor_backward (nopeus, 500);
             if ((dig.l3 == 1) && (dig.l1 == 1) && (dig.r1 == 1) && (dig.r3 == 1)){
                 motor_turn ( nopeus, 0, 800);
             }
         }//jos uloimmat mustia
         if (dig.l3 == 0 || dig.r3 == 0){
-            motor_backward (nopeus, 0);
+            motor_backward (nopeus, 500);
         }
         }  
     }

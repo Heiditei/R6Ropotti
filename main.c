@@ -28,7 +28,8 @@ int main()
     int stopline = 0;
     unsigned int IR_val = 0;
     printf("\nBoot\n");
-
+    int blackline = 0;
+    
     BatteryLed_Write(1); // Switch led on 
     BatteryLed_Write(0); // Switch led off 
     //uint8 button;
@@ -62,38 +63,57 @@ int main()
             stopline++;
         }
     }  
+    
     //Wait for controller signal
     while (IR_val == 0){
             IR_val = get_IR ();
     }
+    
     motor_start();
     motor_forward (nopeus, 200);
     stopline = 0;
-     for(;;)
-    {
+    
+    while (stopline < 1){
+        
         button = SW1_Read(); // read SW1 on pSoC board
         {
         //CyDelay(2000);
         reflectance_read(&ref);
         reflectance_digital(&dig);
         CyDelay(1);
-        motor_start();
+        //motor_start();
         
-         //Ensin uloimmat valkoisia, sitten mustia
-        if (dig.l3 == 1 && dig.l1 == 0 && dig.r1 == 0 && dig.r3 == 1) {
-           if(dig.l3 == 0 && dig.r3 == 0){
-                motor_forward (nopeus/2,0);
-                stopline++;
-                printf ("stopline %d \n", stopline);
-                //motor_stop ();
-                Beep (3,20);
+        
+        if(dig.l3 == 0 && dig.l1 == 0 && dig.r1 == 0 && dig.r3 == 0){
+            blackline = 1;
+        }
+        if (blackline == 1) {
+            while (dig.l3 == 0 && dig.r3 == 0) {
+                motor_forward (nopeus,0);
+                reflectance_read(&ref);
+                reflectance_digital(&dig);
+                //Beep (3,44);
+            }
+            while (dig.l3 == 1 && dig.r3 == 1){
+                motor_forward (nopeus,0);
+                Beep( 8,20);
+                reflectance_read(&ref);
+                reflectance_digital(&dig);
+                if (dig.l3 == 0 && dig.r3 == 0){
+                    stopline++;
+                    //motor_stop ();
+                    break;
+                }
             }
         }
+        
         //Aja suoraan
-        if (ref.l1 > 9000 && ref.r1 > 9000) {
-            motor_turn (nopeus,nopeus,0);
+        if (ref.l1 > 9000 && ref.r1 > 9000){
+            //blackline = 0;  
+            motor_forward (nopeus, 0);
         }
         
+
         //Aja oikealle
         //l3 = valk, l1 = valk, r1 = must, r3 =valk
         if ((ref.r1 > 15000) && (ref.l1 < 9000) && (ref.r3 < 9000) && (ref.l3 < 9000)) {
@@ -116,15 +136,12 @@ int main()
         }//l3 = must, l1 = valk, r1 = valk, r3 =valk
         else if ((ref.l3 > 15000) && (ref.l1 < 9000) && (ref.r1 < 9000) && (ref.r3 < 9000)){
             motor_turn (0, nopeus,0);
-        }
-        
-        //Pysäytä moottori kolmannella mustalla viivalla
-        if (stopline > 1) {
-            motor_stop();
+        }  
         }
     }
-         
-    }
+    //Pysäytä moottori kolmannella mustalla viivalla
+    motor_stop();
+   
 
     for(;;)
     {

@@ -40,7 +40,6 @@ int main()
     CyGlobalIntEnable; 
     UART_1_Start();
     uint8 button;
-    //int stopline = 0;
     sensor_isr_StartEx(sensor_isr_handler);
     
     reflectance_start();
@@ -83,33 +82,33 @@ int main()
         CyDelay(1);
         //motor_start();
         
-        
+        //Tunnistaa olevansa mustalla
         if(dig.l3 == 0 && dig.l1 == 0 && dig.r1 == 0 && dig.r3 == 0){
             blackline = 1;
         }
+        //Jos mustalla viivalla
         if (blackline == 1) {
             while (dig.l3 == 0 && dig.r3 == 0) {
                 motor_forward (nopeus,0);
                 reflectance_read(&ref);
                 reflectance_digital(&dig);
                 //Beep (3,44);
-            }
+            }//ja sen jälkeen uloimmat anturit näkee valkoista
             while (dig.l3 == 1 && dig.r3 == 1){
                 motor_forward (nopeus,0);
                 Beep( 8,20);
                 reflectance_read(&ref);
                 reflectance_digital(&dig);
+                //Ja sen jälkeen taas mustaa.
                 if (dig.l3 == 0 && dig.r3 == 0){
                     stopline++;
-                    //motor_stop ();
                     break;
                 }
             }
         }
         
         //Aja suoraan
-        if (ref.l1 > 9000 && ref.r1 > 9000){
-            //blackline = 0;  
+        if (ref.l1 > 9000 && ref.r1 > 9000){ 
             motor_forward (nopeus, 0);
         }
         

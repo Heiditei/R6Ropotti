@@ -76,9 +76,7 @@ int main()
         CyDelay(1);
         motor_start();
         reflectance_digital(&dig);
-        reflectance_read(&ref);
-        Ultra_Start();
-        
+        reflectance_read(&ref);  
         //Pyöriympyrää
         //kaikki valkoisella
         if ((dig.l3 == 1) && (dig.l1 == 1) && (dig.r1 == 1) && (dig.r3 == 1)){

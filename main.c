@@ -1,34 +1,4 @@
-
-/**
-* @mainpage ZumoBot Project
-* @brief    You can make your own ZumoBot with various sensors.
-* @details  <br><br>
-    <p>
-    <B>General</B><br>
-    You will use Pololu Zumo Shields for your robot project with CY8CKIT-059(PSoC 5LP) from Cypress semiconductor.This 
-    library has basic methods of various sensors and communications so that you can make what you want with them. <br> 
-    <br><br>
-    </p>
-    
-    <p>
-    <B>Sensors</B><br>
-    &nbsp;Included: <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;LSM303D: Accelerometer & Magnetometer<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;L3GD20H: Gyroscope<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;Reflectance sensor<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;Motors
-    &nbsp;Wii nunchuck<br>
-    &nbsp;TSOP-2236: IR Receiver<br>
-    &nbsp;HC-SR04: Ultrasonic sensor<br>
-    &nbsp;APDS-9301: Ambient light sensor<br>
-    &nbsp;IR LED <br><br><br>
-    </p>
-    
-    <p>
-    <B>Communication</B><br>
-    I2C, UART, Serial<br>
-    </p>
-*/
+//Sumopuoli
 
 #include <project.h>
 #include <stdio.h>
@@ -43,14 +13,7 @@
 #include "Ambient.h"
 #include "Beep.h"
 
-int rread(void);
-
-/**
- * @file    main.c
- * @brief   
- * @details  ** You should enable global interrupt for operating properly. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
-*/        
-    
+int rread(void);    
 
 //battery level//
 int main()
@@ -74,7 +37,6 @@ int main()
     UART_1_Start();
     uint8 button;
     int stopline = 0;
-    //reflectance_set_threshold (10000, 10000, 10000, 10000);
     sensor_isr_StartEx(sensor_isr_handler);
     
     reflectance_start();
@@ -88,7 +50,6 @@ int main()
     while (SW1_Read() == 1)
     {
     }
-    //CyDelay(500);
     
     
     //Go to stopline.
@@ -114,7 +75,9 @@ int main()
         {
         CyDelay(1);
         motor_start();
+        reflectance_digital(&dig);
         reflectance_read(&ref);
+        Ultra_Start();
         
         //Pyöriympyrää
         //kaikki valkoisella
@@ -160,30 +123,6 @@ int main()
         }  
     }
 
-    /*
-    uint8 button;
-    CyGlobalIntEnable; 
-    UART_1_Start();
-    
-    button = SW1_Read(); // read SW1 on pSoC board
-    while (SW1_Read() == 1);
-    CyDelay(1000);
-    motor_start();              // motor start
-
-    motor_forward(200,2200);     // moving forward
-    motor_turn(215,10,400);     // turn
-    motor_forward(200,1600);
-    motor_turn(205,10,400);     // turn
-    motor_forward(200,1500);
-    motor_turn(205,10,500);
-    motor_forward(200,600);
-    motor_turn(200,125,400);
-    motor_forward(200,800);
-    
-    //motor_backward(100,2000);    // movinb backward
-       
-    motor_stop();               // motor stop
-*/
     for(;;)
     {
         
